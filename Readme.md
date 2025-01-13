@@ -1,6 +1,6 @@
 # Event Management Platform
 
-## Run Locallly
+## Run Locally
 
 1. Fork the repo
 
