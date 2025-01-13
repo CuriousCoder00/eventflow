@@ -1,5 +1,4 @@
 import { Request, RequestHandler, Response } from "express";
-
 import Event from "../schemas/event.schema";
 
 /**
@@ -21,9 +20,9 @@ export const createEventController: RequestHandler = async (req: Request, res: R
         // Create a new event
         const event = new Event({ title, description, location, createdBy: req.user?.id });
         // Save the event
-        await event.save();
+        const savedEvents = await event.save();
         // Return a 201 status code
-        res.status(201).json({ message: "Event created", event });
+        res.status(201).json({ message: "Event created", savedEvents });
         return;
     } catch (error) {
         // Log the error

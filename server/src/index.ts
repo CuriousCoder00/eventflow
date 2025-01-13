@@ -3,9 +3,9 @@ import http from 'http';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import { Server as socketIOServer } from 'socket.io';
-
-import { PORT } from './lib/config';
+import { Server } from 'socket.io';
+import jwt from 'jsonwebtoken';
+import { JWT_SECRET, PORT } from './lib/config';
 import { db } from './lib/db';
 import authRouter from './routes/auth.routes';
 import eventRouter from './routes/event.routes';
@@ -18,7 +18,14 @@ db();
 const app = express();
 
 const server = http.createServer(app);
-const io = new socketIOServer(server, { cors: { origin: '*' } });
+export const io = new Server(server, {
+    cors: {
+        origin: '*',
+        methods: ['GET', 'POST'],
+        credentials: true,
+    },
+});
+
 
 // Use the Express JSON parser
 app.use(express.json());
@@ -38,18 +45,39 @@ app.use('/api/v1/event', eventRouter);
 
 // Socket.io Realtime Connection
 
+io.use((socket, next) => {
+    const token = socket.handshake.headers.cookie?.split('=')[1];
+    if (token && jwt.verify(token, JWT_SECRET)) {
+        next();
+    } else {
+        next(new Error('Unauthorized'));
+    }
+});
+
 io.on('connection', (socket) => {
-    console.log('A user connected');
+    console.log('a user connected');
     socket.on('disconnect', () => {
-        console.log('User disconnected');
+        console.log('user disconnected');
     });
-    socket.on('chat message', (msg) => {
-        io.emit('chat message', msg);
+    socket.on('message', (msg) => {
+        console.log('message: ' + msg);
+        io.emit('message', msg);
+    });
+    socket.addListener('eventCreated', (event) => {
+        console.log('event created: ', event);
+        io.emit('eventCreated', event);
+    });
+    socket.on('eventCreated', (event) => {
+        console.log('event created: ', event);
+        io.emit('eventCreated', event);
+    });
+    socket.on('error', (error) => {
+        console.error('Socket error: ', error);
     });
 });
 
 // Start the server
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 }).on('error', (error) => {
     console.error('Error starting server: ', error);
