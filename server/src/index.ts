@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 
 import { PORT } from './lib/config';
 import { db } from './lib/db';
+import authRouter from './routes/auth.routes';
 
 
 // Connect to the database
@@ -23,6 +24,10 @@ app.use(bodyParser.json());
 app.use(cors({ credentials: true, origin: true }));
 // Use the cookie parser
 app.use(cookieParser());
+
+
+// Routes
+app.use('/api/v1/auth', authRouter);
 
 // Start the server
 app.listen(PORT, () => {
