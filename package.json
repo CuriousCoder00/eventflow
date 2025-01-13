@@ -1,0 +1,29 @@
+{
+  "name": "event-management-platform",
+  "version": "1.0.0",
+  "description": "Event Management Platform",
+  "main": ".",
+  "scripts": {
+    "install": "npm install --save-dev concurrently && cd app && echo \"Installing app dependencies\" && npm install && cd .. && cd server && echo \"Installing server dependencies\" && npm install && cd ..",
+    "dev": "concurrently \"cd app && npm run dev\" \"cd server && npm run dev\"",
+    "build": "concurrently \"cd app && npm run build\" \"cd server && npm run build\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CuriousCoder00/Event-Management-Platform.git"
+  },
+  "keywords": [
+    "event",
+    "management",
+    "platform"
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CuriousCoder00/Event-Management-Platform/issues"
+  },
+  "homepage": "https://github.com/CuriousCoder00/Event-Management-Platform#readme",
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
